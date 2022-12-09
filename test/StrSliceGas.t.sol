@@ -69,14 +69,6 @@ contract StrSliceGasTest {
         );
         _logGas_memeq_memcmp(toSlice(LOREM_IPSUM), toSlice(LOREM_IPSUM));
         _logGas_memeq_memcmp(toSlice(LOREM_IPSUM_CHINESE), toSlice(LOREM_IPSUM_CHINESE));
-
-        _logGas_memeq_memcmp(toSlice(string(abi.encodePacked(
-            LOREM_IPSUM_CHINESE,LOREM_IPSUM_CHINESE,LOREM_IPSUM_CHINESE,LOREM_IPSUM_CHINESE,
-            LOREM_IPSUM
-        ))), toSlice(string(abi.encodePacked(
-            LOREM_IPSUM_CHINESE,LOREM_IPSUM_CHINESE,LOREM_IPSUM_CHINESE,LOREM_IPSUM_CHINESE,
-            LOREM_IPSUM
-        ))));
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -134,7 +126,6 @@ contract StrSliceGasTest {
         console.log("find:  %s gas, %s len, %s pat", gasL, s1.len(), s2.len());
         console.log("rfind: %s gas, %s len, %s pat", gasR, s1.len(), s2.len());
 
-        console.log("--");
         strings.slice memory a_s1 = strings.toSlice(s1.toString());
         strings.slice memory a_s2 = strings.toSlice(s2.toString());
 
@@ -150,7 +141,7 @@ contract StrSliceGasTest {
         gasR -= gasleft();
         console.log("find:  %s gas (Arachnid/solidity-stringutils)", gasL);
         console.log("rfind: %s gas (Arachnid/solidity-stringutils)", gasR);
-        console.log("--\n");
+        console.log("--");
     }
 
     function testGasFind() public view {
@@ -306,7 +297,6 @@ contract StrSliceGasTest {
         console.log("[%s:%s]", l.len(), r.len());
         console.log("rsplitOnce: %s gas", gas);
 
-        console.log("--");
         strings.slice memory a_s = strings.toSlice(s.toString());
         strings.slice memory a_pat = strings.toSlice(pat.toString());
 
@@ -322,7 +312,7 @@ contract StrSliceGasTest {
         a_l = strings.rsplit(a_s, a_pat);
         gas -= gasleft();
         console.log("rsplit:     %s gas", gas);
-        console.log("--\n");
+        console.log("--");
     }
 
     function testGasSplit() public view {
