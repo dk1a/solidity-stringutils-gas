@@ -24,3 +24,4 @@ The logs can be hard to read. The gist of what I've learned so far:
 5. Shorter strings are worse mostly due to overhead. Like just calling len() and ptr() wastes ~50 gas everywhere. That's the "usability and readability" part that I'm reluctant to optimize away.
 6. memcmp, memchr, memmove etc are fast and have little overhead; you can use them directly if you need to.
 7. memmove (i.e. identity precompile) is great but is `view`; memcpy (i.e. chunked mload+mstore) is way worse but is `pure`. I don't use memcpy internally, but it is there if you need it. This is why some methods in Slice and StrSlice are view.
+8. StrCharsIter: `count` is kinda slow - it has to validate every single UTF-8 char. `unsafeCount` is very fast - it doesn't validate anything. Note that arachnid's `len` has no validation and is the equivalent of `unsafeCount`.

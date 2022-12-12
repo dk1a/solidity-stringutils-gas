@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.17;
 
-import { StrSlice, StrSlice__, toSlice, Slice } from "@dk1a/solidity-stringutils/src/StrSlice.sol";
+import { StrSlice, StrSlice__, toSlice, StrCharsIter } from "@dk1a/solidity-stringutils/src/StrSlice.sol";
 
 import { memeq, memcmp } from "@dk1a/solidity-stringutils/src/utils/mem.sol";
 import { memchr } from "@dk1a/solidity-stringutils/src/utils/memchr.sol";
@@ -237,7 +237,7 @@ contract StrSliceGasTest {
                                         CMP
     //////////////////////////////////////////////////////////////////////////*/
 
-    function _logGas_cmp(StrSlice s1, StrSlice s2) internal view returns (int a) {
+    function _logGas_cmp(StrSlice s1, StrSlice s2) internal view returns (int256 a) {
         uint256 gas;
 
         gas = gasleft();
@@ -331,5 +331,43 @@ contract StrSliceGasTest {
         _logGas_split(toSlice(LOREM_IPSUM_CHINESE), toSlice(unicode"。"));
         _logGas_split(toSlice(LOREM_IPSUM_CHINESE), toSlice(LOREM_IPSUM_CHINESE_PAT_200_AT_700));
         _logGas_split(toSlice(LOREM_IPSUM_CHINESE), toSlice("not found pattern"));
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                    CHARS COUNT
+    //////////////////////////////////////////////////////////////////////////*/
+
+    function _logGas_charsCount(StrSlice s) internal view returns (uint256 a, bool b) {
+        uint256 gas;
+
+        gas = gasleft();
+        a = s.chars().count();
+        gas -= gasleft();
+        console.log("chars-count:  %s gas, %s len", gas, s.len());
+
+        gas = gasleft();
+        b = s.chars().validateUtf8();
+        gas -= gasleft();
+        console.log("validate:     %s gas, %s len", gas, s.len());
+
+        gas = gasleft();
+        a = s.chars().unsafeCount();
+        gas -= gasleft();
+        console.log("unsafe-count: %s gas, %s len", gas, s.len());
+
+        strings.slice memory a_s = strings.toSlice(s.toString());
+        gas = gasleft();
+        a = strings.len(a_s);
+        gas -= gasleft();
+        console.log("len:          %s gas (Arachnid/solidity-stringutils)", gas);
+        console.log("--");
+    }
+
+    function testGasCharsCount() public view {
+        _logGas_charsCount(toSlice("A"));
+        _logGas_charsCount(toSlice(LOREM_IPSUM_32));
+        _logGas_charsCount(toSlice(LOREM_IPSUM_33));
+        _logGas_charsCount(toSlice(LOREM_IPSUM));
+        _logGas_charsCount(toSlice(LOREM_IPSUM_CHINESE));
     }
 }
